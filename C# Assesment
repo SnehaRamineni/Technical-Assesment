@@ -1,0 +1,213 @@
+// 1. Using the code sample below as a starting place,
+// and given the classes of Authors and Books described below
+// write a lambda expression to get all the books by an author's LastName.
+// Then order by the book's PublishDate descending.
+
+public class Author
+{
+    public int Id { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public List<Book> Books { get; set; }
+}
+
+public class Book
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public DateTime PublishDate { get; set; }
+    public Author Author { get; set; }
+}
+
+public List<Book> GetBooksByAuthorLastName(string lastName)
+{
+    List<Book> books = new List<Book>();
+    // Assume code to get Books from a database
+    // books = GetBooksFromDatabase();
+}
+
+Solution:
+
+public List<Book> GetBooksByAuthorsLastName(string lastName)
+{
+    List<Book> books = new List<Book>();
+    // Assume code to get Books from a database
+    books = GetBooksFromDatabase();
+	if(books != null && books.Count() > 0) // Check if list has any books
+	{
+		return books.where(b => b.Authors.LastName.ToUpper() == lastname.ToUpper())
+		.OrderByDescending(b => b.PublishDate).ToList(); 
+	}
+	return null;
+}
+
+// 2. Using the code your wrote above,
+// create a unit test that confirms that the data returned
+// matches what is expected based on specified input.
+// (Call your own method and then confirm the output)
+
+// Unit Test Goes Here
+[TestFixture]
+    public class LibraryManagerTest {
+        private List<Book> books;
+       // setting up test data
+       [SetUp]
+        public void Setup() {
+            Author author1 = new Author() {
+                FirstName = "John",
+                LastName = "Smith",
+                Id = 1
+            };
+            Author author2 = new Author() {
+                FirstName = "Matt",
+                LastName = "Friend",
+                Id = 2
+            };
+            Author author3 = new Author() {
+                FirstName = "Andy",
+                LastName = "Donndelinger",
+                Id = 3
+            };
+            books = new List<Book>()
+            {
+                new Book()
+                {   Id = 1,
+                    PublishDate = new DateTime(2013,01,02),
+                    Title = "Rama",
+                   Author = author1
+                },
+                   new Book()
+                {
+                    Id = 2,
+                    PublishDate = new DateTime(2014,02,03),
+                    Title = "Sita",
+                   Author = author1
+                },
+                 new Book()
+                {
+                    Id = 3,
+                    PublishDate = new DateTime(2015,03,04),
+                    Title = "Warrior",
+                   Author = author2
+                },
+                  new Book()
+                {
+                    Id = 4,
+                    PublishDate = new DateTime(2016,04,05),
+                    Title = "Ravana",
+                   Author = author2
+                },
+                 new Book()
+                {
+                    Id = 4,
+                    PublishDate = new DateTime(2017,05,06),
+                    Title = "Hanuma",
+                   Author = author1
+                },
+                  new Book()
+                {
+                    Id = 5,
+                    PublishDate = new DateTime(2018,06,07),
+                    Title = "Mithila",
+                   Author = author3
+                }
+				new Book()
+                {
+                    Id = 6,
+                    PublishDate = new DateTime(2019,07,08),
+                    Title = "Ayodhya",
+                   Author = author3
+                }
+            };
+
+        }
+        
+        //Test for application behaviour when searched for available user
+       [Test]
+        public void CheckForValidAuthor()
+        {
+            // Setup Test Data
+            List<Book> testBooks = this.books;
+
+            // Call business logic
+            var filterBooks = businessObject.GetBooksByAuthorLastName("Smith");
+
+            // Validating the outcome
+            Assert.That(filterBooks.Count, Is.EqualTo(1));
+            Assert.That(filterBooks[0].PublishDate, Is.EqualTo(new DateTime(2014,02,03)));
+            Assert.That(filterBooks[0].Title, Is.EqualTo("Sita"));
+        }
+       
+    }
+
+
+// 3. Assume that it takes about 10 seconds for each execution of GetAuthorsLatestBooksAndUpdateDatabase() to run.
+// There are enough authors in the database that this would be a very long running process to finish.
+// The process is kicked off by a user pressing a button on a webpage, and the user no longer wants to wait for the process to finish.
+// Rewrite the code sample below so that it is multi-threaded, but only a max of 20 threads are spooled up to run simultaneously.
+// Also, return control of the webpage back to the user once the multi-threaded process has begun.
+
+public void GetAuthorssLatestWork()
+{
+    List<Authors> Authorss = new List<Authors>();
+    // Assume code to get Authorss from a database
+    // Authorss = GetAuthorssFromDatabase();
+    foreach (Authors Authors in Authorss)
+    {
+		Task UpdateTasks = new Task[20];
+			 
+       for (int i = 0; i < UpdateTasks.Length; i++)
+       {
+		  UpdateTasks[i] = Task.Factory.StartNew(() =>
+          {
+             GetAuthorssLatestBooksAndUpdateDatabase(Authors);
+          }
+          );
+       }
+    }
+}
+
+
+
+
+// 4. Using the code sample below as a starting place
+// and given the class of Employee described below,
+// write a recursive method that would return all the Employees in this format
+
+
+public class Employee
+{
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public List<Employee> Subordinates { get; set; }
+}
+
+public string PrintEmployeeHierarchy(List<Employee> nestedEmployees)
+{
+			// Code Goes Here
+			string returnFormat = string.Empty;
+            foreach (var employee in nestedEmployees)
+            {
+                strEmployess += employee.FirstName + " " + employee.LastName + Environment.NewLine;
+                if (employee.Subordinates != null && employee.Subordinates.Any())
+               {
+                   strEmployess += PrintEmployeeHierarchy(employee.Subordinates);
+               }
+             }
+            return strEmployess;
+}
+
+
+
+=> Bob Barker
+  => James Dean
+    => Todd Howard
+  => Phil McCracken
+    => Berny Sanders
+=> Ted Drew
+  => Jimmy Stuart
+    => Jake Thomas
+    => John Daily
+      => Tommy Pickles
+        => Tom Cruise
+        => Kate Blanchett
