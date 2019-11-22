@@ -1,0 +1,61 @@
+-- Given a schema of Authors and Publications described below,
+-- please complete the following questions
+
+Authors
+	Id	int primary key (not null)
+	FirstName	varchar(50) (not null)
+	LastName	varchar(50) (not null)
+
+Publications
+	Id	int primary key (not null)
+	Title	varchar(100) (not null)
+	PublishDate	datetime2(2) (not null)
+	AuthorId	int (null)
+
+
+
+-- 1. Write a query to return all the Authors and include the Publish date of their most recent publication.
+
+select A.*, P.PublishDate from Authors A join Publications P on P.AuthorId = A.Id 
+JOIN
+(   SELECT  AuthorId, MAX(PublishDate) AS RecentPublishedDate
+    FROM    Publications
+    GROUP BY AuthorId
+) AS RecentPublished
+    ON RecentPublished.AuthorId = P.AuthorId
+    AND RecentPublished.RecentPublishedDate = P.PublishDate;
+	
+
+
+-- 2. Rewrite the query from #1 to also include the Title of their most recent publication.
+
+select A.*, P.PublishDate, P.Title from Authors A join Publications P on P.AuthorId = A.Id 
+JOIN
+(   SELECT  AuthorId, MAX(PublishDate) AS RecentPublishedDate
+    FROM    Publications
+    GROUP BY AuthorId
+) AS RecentPublished
+    ON RecentPublished.AuthorId = P.AuthorId
+    AND RecentPublished.RecentPublishedDate = P.PublishDate;
+
+
+
+-- 3. Write a query to find any records in Publications that are missing an Author record.
+
+
+select P.* from Publications P where AuthorId not in (select A.Id from Authors A)
+
+-- 4. Write the query for #3 above in a different way.
+
+
+Select p.* from Publications P
+Except
+SELECT P.*
+  FROM Publications P
+       Inner JOIN Authors A
+          ON P.AuthorId = A.Id
+
+-- 5. Describe what indexes would help the performance for the queries you wrote above.
+
+Creating non clustered index for LastName in AUthor table would help for fast search
+Also, Creating non clustered index for AuthorId in Publications table would help 
